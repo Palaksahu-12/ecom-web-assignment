@@ -4,9 +4,14 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const path = require("path");
 
+require("dotenv").config(); 
+
 const app = express();
+
+const FRONTEND_URL = process.env.FRONTEND_URL || "*"; 
+app.use(cors({ origin: FRONTEND_URL }));
+
 app.use(express.json());
-app.use(cors());
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret123";
 

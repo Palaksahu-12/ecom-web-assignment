@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
+
 export default function Listing() {
   const [items, setItems] = useState([]);
   const [category, setCategory] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [loading, setLoading] = useState(false);
   const nav = useNavigate();
 
   useEffect(() => {
@@ -12,27 +15,44 @@ export default function Listing() {
   }, [category, maxPrice]);
 
   async function fetchItems() {
-    let url = "/api/items";
-    if (category) url += `category=${category}&`;
-    if (maxPrice) url += `maxPrice=${maxPrice}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    setItems(data);
+    setLoading(true);
+    try {
+      let url = new URL(`${API_BASE}/api/items`);
+      if (category) url.searchParams.append("category", category);
+      if (maxPrice) url.searchParams.append("maxPrice", maxPrice);
+
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error("Failed to fetch items");
+      const data = await res.json();
+      setItems(data);
+    } catch (err) {
+      console.error("Fetch items error:", err);
+      alert("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function addToCart(itemId) {
     const token = localStorage.getItem("token");
     if (!token) return nav("/login");
 
-    await fetch("/api/cart/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      body: JSON.stringify({ itemId, quantity: 1 }),
-    });
-    alert("Added to cart!");
+    try {
+      const res = await fetch(`${API_BASE}/api/cart/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify({ itemId, quantity: 1 }),
+      });
+
+      if (!res.ok) throw new Error("Failed to add item to cart");
+      alert("Added to cart!");
+    } catch (err) {
+      console.error("Add to cart error:", err);
+      alert("Failed to add item to cart");
+    }
   }
 
   return (
@@ -69,21 +89,27 @@ export default function Listing() {
       </div>
 
       {/* Item list */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {items.map((item) => (
-          <div key={item.id} className="border p-4 rounded shadow">
-            <h2 className="font-bold">{item.title}</h2>
-            <p>₹{item.price}</p>
-            <p className="text-sm text-gray-500">{item.category}</p>
-            <button
-              onClick={() => addToCart(item.id)}
-              className="mt-2 bg-indigo-600 text-white px-3 py-1 rounded"
-            >
-              Add to Cart
-            </button>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <p>Loading products...</p>
+      ) : items.length === 0 ? (
+        <p>No products found.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {items.map((item) => (
+            <div key={item.id} className="border p-4 rounded shadow">
+              <h2 className="font-bold">{item.title}</h2>
+              <p>₹{item.price}</p>
+              <p className="text-sm text-gray-500">{item.category}</p>
+              <button
+                onClick={() => addToCart(item.id)}
+                className="mt-2 bg-indigo-600 text-white px-3 py-1 rounded"
+              >
+                Add to Cart
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
