@@ -9,30 +9,27 @@ app.use(cors());
 
 const JWT_SECRET = "secret123";
 
-// Temporary "databases"
-let users = [];   // {id, name, email, passwordHash}
+let users = [];  
 let items = [
   { id: 1, title: "T-shirt", price: 500, category: "Clothing" },
   { id: 2, title: "Shoes", price: 1500, category: "Footwear" },
   { id: 3, title: "Headphones", price: 2000, category: "Electronics" }
 ];
-let carts = {};   // userId -> [ { itemId, quantity } ]
+let carts = {}; 
 
-// Middleware
 function auth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ error: "No token" });
   const token = authHeader.split(" ")[1];
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // { userId }
+    req.user = decoded; 
     next();
   } catch {
     res.status(401).json({ error: "Invalid token" });
   }
 }
 
-// Signup
 app.post("/api/auth/signup", async (req, res) => {
   const { name, email, password } = req.body;
   if (users.find(u => u.email === email)) {
@@ -45,7 +42,6 @@ app.post("/api/auth/signup", async (req, res) => {
   res.json({ token, user: { id: newUser.id, name, email } });
 });
 
-// Login
 app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body;
   const user = users.find(u => u.email === email);
@@ -56,7 +52,6 @@ app.post("/api/auth/login", async (req, res) => {
   res.json({ token, user: { id: user.id, name: user.name, email } });
 });
 
-// CRUD for items (basic, no DB)
 app.get("/api/items", (req, res) => {
   const { category, minPrice, maxPrice } = req.query;
   let filtered = items;
@@ -66,7 +61,6 @@ app.get("/api/items", (req, res) => {
   res.json(filtered);
 });
 
-// Cart APIs
 app.get("/api/cart", auth, (req, res) => {
   const userCart = carts[req.user.userId] || [];
   const cartItems = userCart.map(ci => {
