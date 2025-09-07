@@ -90,9 +90,10 @@ app.post("/api/cart/remove", auth, (req, res) => {
 
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-app.get("/:path(*)", (req, res) => {
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
+
 
 
 const PORT = process.env.PORT || 4000;
