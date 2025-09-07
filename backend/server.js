@@ -7,15 +7,11 @@ require("dotenv").config();
 
 const app = express();
 
-const FRONTEND_URL = process.env.FRONTEND_URL || "*";
-app.use(
-  cors({
-    origin: FRONTEND_URL,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
-
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret123";
@@ -24,7 +20,7 @@ let users = [];
 let items = [
   { id: 1, title: "T-shirt", price: 500, category: "Clothing" },
   { id: 2, title: "Shoes", price: 1500, category: "Footwear" },
-  { id: 3, title: "Headphones", price: 2000, category: "Electronics" },
+  { id: 3, title: "Headphones", price: 2000, category: "Electronics" }
 ];
 let carts = {};
 
@@ -99,9 +95,9 @@ app.post("/api/cart/remove", auth, (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
-app.get(/^\/.*$/, (req, res) => {
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+app.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
