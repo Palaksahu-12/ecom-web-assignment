@@ -7,7 +7,7 @@ export default function Login() {
 
   async function submit(e) {
     e.preventDefault();
-    const res = await fetch("http://localhost:4000/api/auth/login", {
+    const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),

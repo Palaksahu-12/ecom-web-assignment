@@ -92,3 +92,8 @@ app.post("/api/cart/remove", auth, (req, res) => {
 });
 
 app.listen(4000, () => console.log("Backend running on http://localhost:4000"));
+
+app.use(express.static("../frontend/dist"));
+app.get("*", (req, res) => {
+  res.sendFile(__dirname + "/../frontend/dist/index.html");
+});

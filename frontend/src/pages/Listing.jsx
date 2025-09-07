@@ -12,7 +12,7 @@ export default function Listing() {
   }, [category, maxPrice]);
 
   async function fetchItems() {
-    let url = "http://localhost:4000/api/items?";
+    let url = "/api/items";
     if (category) url += `category=${category}&`;
     if (maxPrice) url += `maxPrice=${maxPrice}`;
     const res = await fetch(url);
@@ -24,7 +24,7 @@ export default function Listing() {
     const token = localStorage.getItem("token");
     if (!token) return nav("/login");
 
-    await fetch("http://localhost:4000/api/cart/add", {
+    await fetch("/api/cart/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

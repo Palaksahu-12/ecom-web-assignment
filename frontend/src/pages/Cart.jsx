@@ -13,7 +13,7 @@ export default function Cart() {
     const token = localStorage.getItem("token");
     if (!token) return nav("/login");
 
-    const res = await fetch("http://localhost:4000/api/cart", {
+    const res = await fetch("/api/cart", {
       headers: { Authorization: "Bearer " + token },
     });
     const data = await res.json();
@@ -22,7 +22,7 @@ export default function Cart() {
 
   async function removeItem(itemId) {
     const token = localStorage.getItem("token");
-    await fetch("http://localhost:4000/api/cart/remove", {
+    await fetch("/api/cart/remove", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
