@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "/api"
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -18,7 +18,7 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -28,7 +28,7 @@ export default function Login() {
 
       if (res.ok && data.token) {
         localStorage.setItem("token", data.token);
-        nav("/listing"); // Redirect to listing after login
+        nav("/listing");
       } else if (data.error) {
         alert(data.error);
       } else {

@@ -3,12 +3,18 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const path = require("path");
-require("dotenv").config(); 
+require("dotenv").config();
 
 const app = express();
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "*";
-app.use(cors({ origin: FRONTEND_URL }));
+app.use(
+  cors({
+    origin: FRONTEND_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
@@ -18,7 +24,7 @@ let users = [];
 let items = [
   { id: 1, title: "T-shirt", price: 500, category: "Clothing" },
   { id: 2, title: "Shoes", price: 1500, category: "Footwear" },
-  { id: 3, title: "Headphones", price: 2000, category: "Electronics" }
+  { id: 3, title: "Headphones", price: 2000, category: "Electronics" },
 ];
 let carts = {};
 
@@ -93,7 +99,6 @@ app.post("/api/cart/remove", auth, (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
 app.get(/^\/.*$/, (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });

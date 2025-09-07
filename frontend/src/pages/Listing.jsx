@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "/api";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function Listing() {
   const [items, setItems] = useState([]);
@@ -17,7 +17,7 @@ export default function Listing() {
   async function fetchItems() {
     setLoading(true);
     try {
-      let url = new URL(`${API_BASE}/api/items`);
+      let url = new URL(`${API_BASE}/items`);
       if (category) url.searchParams.append("category", category);
       if (maxPrice) url.searchParams.append("maxPrice", maxPrice);
 
@@ -38,7 +38,7 @@ export default function Listing() {
     if (!token) return nav("/login");
 
     try {
-      const res = await fetch(`${API_BASE}/api/cart/add`, {
+      const res = await fetch(`${API_BASE}/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +59,6 @@ export default function Listing() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Products</h1>
 
-      {/* Filters */}
       <div className="flex gap-4 mb-4">
         <select
           className="border p-2"
@@ -88,7 +87,6 @@ export default function Listing() {
         </button>
       </div>
 
-      {/* Item list */}
       {loading ? (
         <p>Loading products...</p>
       ) : items.length === 0 ? (

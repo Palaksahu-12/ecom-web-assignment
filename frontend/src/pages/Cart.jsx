@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "/api";
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function Cart() {
   const [cart, setCart] = useState([]);
@@ -18,7 +18,7 @@ export default function Cart() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/cart`, {
+      const res = await fetch(`${API_BASE}/cart`, {
         headers: { Authorization: "Bearer " + token },
       });
       if (!res.ok) throw new Error("Failed to fetch cart");
@@ -37,7 +37,7 @@ export default function Cart() {
     if (!token) return nav("/login");
 
     try {
-      const res = await fetch(`${API_BASE}/api/cart/remove`, {
+      const res = await fetch(`${API_BASE}/cart/remove`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export default function Cart() {
       });
 
       if (!res.ok) throw new Error("Failed to remove item");
-      fetchCart(); 
+      fetchCart();
     } catch (err) {
       console.error("Remove item error:", err);
       alert("Failed to remove item from cart");
